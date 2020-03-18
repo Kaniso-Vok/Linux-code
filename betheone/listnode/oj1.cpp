@@ -1,5 +1,5 @@
 //删除链表中等于给定值 val 的所有节点
-
+//用到新建指向头结点的结点来遍历
 #include <stdio.h>
 struct ListNode {
    int val;
