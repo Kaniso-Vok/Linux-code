@@ -1,4 +1,5 @@
 #pragma once
+#include "strTools.hpp"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -18,7 +19,7 @@ struct Question{
 class oJ_mod1{
   public:
     oJ_mod1(){
-
+      LoadQuestions("./config_oj.cfg");
     };
     bool GetAllQuestions(vector<Question>* ques){
       for(const auto& e:mod1_map){
@@ -41,7 +42,7 @@ class oJ_mod1{
       //编写工具 StrTools 用来切割字符串
       while(getline(file,line)){
         vector<string> vec;
-        StrTools::Split(line,'/t',&vec);
+        StrTools::Split(line," ",&vec);
         if(vec.size()!=4){
           continue;
         }
