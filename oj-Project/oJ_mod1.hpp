@@ -57,11 +57,7 @@ class oJ_mod1{
       file.close();
       return true;
 }
-<<<<<<< HEAD
   //试题信息
-=======
-
->>>>>>> b41a6ea875327919859ea6f59615a6d3ff676e3d
   private:
     unordered_map<string,Question> mod1_map;
 };

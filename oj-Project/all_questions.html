@@ -5,8 +5,8 @@
   <body>
     {{#questions}}
     <div>
-      <h3>{{_id}}.{{_name}} {{_level}}</h3>
+      <a href="/question/{{_id}}"><h3>{{_id}}.{{_name}} {{_level}}</h3></a>
     </div>
-    {{#questions}}
+    {{/questions}}
   </body>
 </html>
