@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <algorithm>
 #include <fstream>
+#include "oJ_log.hpp"
 
 using namespace std;
 
@@ -57,9 +58,24 @@ class oJ_mod1{
       file.close();
       return true;
 }
+//单个题目
+bool GetSingleQuestion(string& id){
+  //1.根据id查找对应题目信息，重点是题目在哪里加载
+  auto iter = mod1_map.find(id);
+  if(iter == mod1_map.end()){
+    LOG(ERROR,"QUESTION NOT FOUND id is") << id << endl;
+    return false;
+  }
+  //加载单个题目信息
+  //从具体的题目文件中获取描述和预定义的代码
+  
+}
+
+
+
   //试题信息
   private:
-    unordered_map<string,Question> mod1_map;
+   unordered_map<string,Question> mod1_map;
 };
 
 

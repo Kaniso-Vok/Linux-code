@@ -32,6 +32,9 @@ int main(){
     //使用正则表达式匹配单个问题的请求  R"(str)"
     //(\d)只能匹配一个数字（0-9），要匹配多位数字需要改为（\d+)
     vok.Get(R"(/question/\d+)",[&ojmod1](const Request& req, Response& resp){
+        //1.去试题模块（map）查找对应题目的信息（序号名称地址难度）
+        //2.去对应题目的路径下家在单个题目的描述信息，组织后返回给浏览器
+        
         string html="131";
         resp.set_content(html,"text/html;charset=UTF-8");
         });
