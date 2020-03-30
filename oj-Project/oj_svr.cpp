@@ -30,17 +30,26 @@ int main(){
         resp.set_content(html,"text/html;charset=UTF-8");
         });
     //使用正则表达式匹配单个问题的请求  R"(str)"
-    //(\d)只能匹配一个数字（0-9），要匹配多位数字需要改为（\d+)
-    vok.Get(R"(/question/\d+)",[&ojmod1](const Request& req, Response& resp){
+    //(\d)只能匹配一个数字（0-9），要匹配多位数字需要改为（\d+),加括号是因为 matches[] 的分组应用
+    vok.Get(R"(/question/(\d+))",[&ojmod1](const Request& req, Response& resp){
         //1.去试题模块（map）查找对应题目的信息（序号名称地址难度）
-        //2.去对应题目的路径下家在单个题目的描述信息，组织后返回给浏览器
+
+        //      cout<<req.path.c_str()<<endl;
+        //      cout<<req.matches[0]<<endl<<req.matches[1]<<endl;
         
-        string html="131";
+        //2.去对应题目的路径下家在单个题目的描述信息
+        string desc,predfe;
+        Question ques;
+        ojmod1.GetSingleQuestion(req.matches[1].str(),&desc,&predfe,&ques);
+
+        //3.组织信息并返回
+        string html;
+        oJview::ExpandSingleQuestion(ques,desc,predfe,&html);
         resp.set_content(html,"text/html;charset=UTF-8");
         });
-    LOG(INFO,"Listen to 192.168.23.131:19999");
-    LOG(INFO,"Server Ready");
+    LOG(INFO,"Listen to 192.168.23.131:19999")<<endl;
+    LOG(INFO,"Server Ready")<<endl;
     //Listen 会进行阻塞
-    vok.listen("192.168.23.131",19999);
+    vok.listen("192.168.23.132",19999);
   return 0;
 }

@@ -32,6 +32,32 @@ class oJ_mod1{
           });
       return true;
     };
+
+//单个题目
+bool GetSingleQuestion(const string& id ,string *desc,string *predfe,Question* ques){
+  //1.根据id查找对应题目信息，重点是题目在哪里加载
+  auto iter = mod1_map.find(id);
+  if(iter == mod1_map.end()){
+    LOG(ERROR,"QUESTION NOT FOUND id is") << id << endl;
+    return false;
+  }
+  *ques=iter->second;
+  //文件路径iter->second._path 
+  //加载单个题目信息
+  //从具体的题目文件中获取描述和预定义的代码
+  int ret = FileOper::LoadDateFromFile(DescPath(iter->second._path),desc);
+  if(ret==-1){
+    LOG(ERROR,"READ DESC FAILED")<<endl;
+    return false;
+  }
+
+  ret = FileOper::LoadDateFromFile(PredfePath(iter->second._path),predfe);
+  if(ret==-1){
+    LOG(ERROR,"READ PREDFE FAILED")<<endl;
+    return false;
+  }
+  return true;
+}
   private:
     bool LoadQuestions(const string& configfile_path){
       ifstream file(configfile_path.c_str());
@@ -58,20 +84,13 @@ class oJ_mod1{
       file.close();
       return true;
 }
-//单个题目
-bool GetSingleQuestion(string& id){
-  //1.根据id查找对应题目信息，重点是题目在哪里加载
-  auto iter = mod1_map.find(id);
-  if(iter == mod1_map.end()){
-    LOG(ERROR,"QUESTION NOT FOUND id is") << id << endl;
-    return false;
-  }
-  //加载单个题目信息
-  //从具体的题目文件中获取描述和预定义的代码
-  
+string DescPath(const string desc_path){
+  return desc_path+"/desc.txt";
 }
-
-
+  
+string PredfePath(const string desc_path){
+  return desc_path+"/predfe.cpp";
+}
 
   //试题信息
   private:

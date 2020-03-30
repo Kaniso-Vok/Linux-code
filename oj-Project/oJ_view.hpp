@@ -27,6 +27,18 @@ class oJview{
     //3.渲染，拿着模板类指针将数据字典中的数据更新到html页面的内存中
     t1->Expand(html,&dict);
   }
+  //渲染单个题目界面（作答界面）
+  static void ExpandSingleQuestion(const Question& ques,string& _desc,string& _predfe,string* html){
+    ctemplate::TemplateDictionary dict("question");
+    dict.SetValue("id",ques._id);
+    dict.SetValue("name",ques._name);
+    dict.SetValue("level",ques._level);
+    dict.SetValue("desc",_desc);
+    dict.SetValue("predfe",_predfe);
+    
+    ctemplate::Template* ret=ctemplate::Template::GetTemplate("./template/question.html",ctemplate::DO_NOT_STRIP);
+    ret->Expand(html,&dict);
+  }
 
 
 };

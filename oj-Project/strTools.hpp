@@ -18,7 +18,7 @@ class StrTools
 //文件操作
 class FileOper{
   public:
-    static int LoadDateFromFile(string& filename,string& content){
+    static int LoadDateFromFile(const string& filename,string* content){
       ifstream file(filename.c_str());
       if(!file.is_open()){
         LOG(ERROR,"OPEN FILE FAILED filename:")<<filename<<endl;
@@ -26,7 +26,7 @@ class FileOper{
       }
       string line;
       while(getline(file,line)){
-        content+=line+"\n";
+        *content+=line+"\n";
       }
       file.close();
       return 0;
