@@ -4,6 +4,7 @@
 #include <vector>
 #include <stdio.h>
 #include "oJ_log.hpp"
+#include "compile.hpp"
 
 int main(){
   using namespace httplib;
@@ -45,6 +46,29 @@ int main(){
         //3.组织信息并返回
         string html;
         oJview::ExpandSingleQuestion(ques,desc,predfe,&html);
+        resp.set_content(html,"text/html;charset=UTF-8");
+        });
+    vok.Post(R"(/question/(\d+))",[&ojmod1](const Request& req, Response& resp){
+        //key-value
+        //1.从正文当中提取出提交的内容，主要是code字段对应的内容，并且将其进行解码（提交的内容当中含有url编码）
+        unordered_map<string,string> pram;
+        urlDecode::ParseBody(req.body,&pram);
+        for(const auto& pra:pram){
+        LOG(INFO,"code")<<pra.second<<endl;
+        }
+        //2.编译&运行
+            //给提交的代码增加头文件和测试用例（main）
+        string fin_code;
+        ojmod1.SplicingCode(pram["code"],req.matches[1].str(),&fin_code); 
+        //LOG(INFO,"code")<<fin_code<<endl; 
+        Json::Value req_json;
+        req_json["code"]=fin_code;
+
+        Json::Value resp_json;
+        Compiler::ComplieAndRun(req_json,&resp_json);
+        
+        //3.构造响应（返回json串）
+        string html="1";
         resp.set_content(html,"text/html;charset=UTF-8");
         });
     LOG(INFO,"Listen to 192.168.23.131:19999")<<endl;

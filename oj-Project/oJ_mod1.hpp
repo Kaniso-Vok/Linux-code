@@ -58,6 +58,25 @@ bool GetSingleQuestion(const string& id ,string *desc,string *predfe,Question* q
   }
   return true;
 }
+
+//拼接代码
+bool SplicingCode(string user_code,const string& ques_id,string* fin_code){
+  //1.找题目是否存在
+  auto iter = mod1_map.find(ques_id);
+  if(iter ==mod1_map.end()){
+    LOG(ERROR,"can't find question id is :") <<ques_id<<endl;
+    return false;
+  }
+  string tail_code;
+  int ret = FileOper::LoadDateFromFile(TailPath(iter->second._path),&tail_code);
+  if(ret < 0){
+    LOG(ERROR,"Open tail.cpp failed");
+    return false;
+  }
+  *fin_code = user_code + tail_code;
+  return true;
+};
+
   private:
     bool LoadQuestions(const string& configfile_path){
       ifstream file(configfile_path.c_str());
@@ -90,6 +109,9 @@ string DescPath(const string desc_path){
   
 string PredfePath(const string desc_path){
   return desc_path+"/predfe.cpp";
+}
+string TailPath(const string desc_path){
+  return desc_path+"/tail.cpp";
 }
 
   //试题信息
