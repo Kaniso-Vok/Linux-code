@@ -40,5 +40,13 @@ class oJview{
     ret->Expand(html,&dict);
   }
 
+  static void ExpandReason(const string & errornum,const string& reason,const string& stdout_reason ,string* html){
+    ctemplate::TemplateDictionary dict("reason");
+    dict.SetValue("errornum",errornum);
+    dict.SetValue("reason",reason);
+    dict.SetValue("stdout",stdout_reason);
+    ctemplate::Template* ret=ctemplate::Template::GetTemplate("./template/reason.html",ctemplate::DO_NOT_STRIP);
+    ret->Expand(html,&dict);
 
+  }
 };

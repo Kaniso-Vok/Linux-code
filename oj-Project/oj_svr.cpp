@@ -50,12 +50,12 @@ int main(){
         });
     vok.Post(R"(/question/(\d+))",[&ojmod1](const Request& req, Response& resp){
         //key-value
-        //1.从正文当中提取出提交的内容，主要是code字段对应的内容，并且将其进行解码（提交的内容当中含有url编码）
+       //1.从正文当中提取出提交的内容，主要是code字段对应的内容，并且将其进行解码（提交的内容当中含有url编码）
         unordered_map<string,string> pram;
         urlDecode::ParseBody(req.body,&pram);
-        for(const auto& pra:pram){
-        LOG(INFO,"code")<<pra.second<<endl;
-        }
+//        for(const auto& pra:pram){
+//        LOG(INFO,"code")<<pra.second<<endl;
+//        }
         //2.编译&运行
             //给提交的代码增加头文件和测试用例（main）
         string fin_code;
@@ -68,10 +68,14 @@ int main(){
         Compiler::ComplieAndRun(req_json,&resp_json);
         
         //3.构造响应（返回json串）
-        string html="1";
+        const string errornum = resp_json["errornum"].asString(); 
+        const string reason = resp_json["reason"].asString();
+        const string stdout_reason = resp_json["stdout_reason"].asString();
+        string html;
+        oJview::ExpandReason(errornum,reason,stdout_reason,&html);
         resp.set_content(html,"text/html;charset=UTF-8");
         });
-    LOG(INFO,"Listen to 192.168.23.131:19999")<<endl;
+    LOG(INFO,"Listen to 192.168.23.132:19999")<<endl;
     LOG(INFO,"Server Ready")<<endl;
     //Listen 会进行阻塞
     vok.listen("192.168.23.132",19999);
