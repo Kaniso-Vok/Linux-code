@@ -37,9 +37,10 @@ int main(){
 
         //      cout<<req.path.c_str()<<endl;
         //      cout<<req.matches[0]<<endl<<req.matches[1]<<endl;
-        
-        //2.去对应题目的路径下家在单个题目的描述信息
         string desc,predfe;
+        //从从querystr当中获取id
+        LOG(INFO,"req.matches")<<req.matches[0]<<':'<<req.matches[1]<<endl; 
+        //2.去对应题目的路径下家在单个题目的描述信息
         Question ques;
         ojmod1.GetSingleQuestion(req.matches[1].str(),&desc,&predfe,&ques);
 
@@ -70,7 +71,7 @@ int main(){
         //3.构造响应（返回json串）
         const string errornum = resp_json["errornum"].asString(); 
         const string reason = resp_json["reason"].asString();
-        const string stdout_reason = resp_json["stdout_reason"].asString();
+        const string stdout_reason = resp_json["stdout"].asString();
         string html;
         oJview::ExpandReason(errornum,reason,stdout_reason,&html);
         resp.set_content(html,"text/html;charset=UTF-8");

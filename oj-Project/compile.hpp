@@ -76,6 +76,10 @@ class Compiler{
       FileOper::LoadDateFromFile(StderrPath(tmp_filename),&stderr_reason);
       (*resp)["stderr"] = stderr_reason;
       
+      //6.清理产生的临时文件
+      Clean(tmp_filename);
+      
+
       return ;
     }
   private:
@@ -111,52 +115,6 @@ class Compiler{
       return "./tmp_files"+filename+".stderr";
     }
     
-    static int Run(const string& filename){
-      //可执行程序
-      //1.创建子进程
-      //  父进程 进程等待
-      //  子进程 替换编译出来的程序
-      int pid =fork();
-      if(pid < 0){
-        LOG(ERROR,"Exec pragma failed Create child press failed")<<endl;       
-        return -1;
-      }
-      else if(pid == 0){
-        //对于子进程执行的限制
-        //1.时间限制---alarm
-        alarm(1);
-        //2.内存大小限制
-        struct rlimit rl; 
-        rl.rlim_cur = 1024 *30000;
-        rl.rlim_max = RLIM_INFINITY; //无限制
-        setrlimit(RLIMIT_AS, &rl);
-
-        //child
-        //获取：标准输出--》重定向到文件
-        int stdout_fd=open(StdoutPath(filename).c_str(),O_CREAT | O_RDWR,0664);
-        if(stdout_fd < 0){
-          LOG(ERROR,"Open stdout file failed ")<<StdoutPath(filename)<<endl;
-          return -1;
-        }
-        dup2(stdout_fd,1);
-        //标准错误--》重定向到文件
-        int stderr_fd=open(StdoutPath(filename).c_str(),O_CREAT | O_RDWR,0664);
-        if(stderr_fd < 0){
-          LOG(ERROR,"Open stderr file failed ")<<StderrPath(filename)<<endl;
-          return -1;
-        }
-        dup2(stdout_fd,2);
-        execl(ExePath(filename).c_str(),ExePath(filename).c_str(),NULL);
-        exit(1);
-      }        
-
-      //father
-      int Status= -1;
-      waitpid(pid,&Status,0);
-      //将是否收到信号的信息返回给调用者，如果调用者判断是0则正常运行完毕，否则收到某个信号异常结束
-      return Status & 0x7f;//coredump标志位
-    };
-
     static bool Compile(const string& filename) {
       //1.构造编译命令--g++ src -o [exec] -std=c++11
       const int commadncount = 20;
@@ -209,4 +167,60 @@ class Compiler{
       }
       return true;
     }
+
+
+    static int Run(const string& filename){
+      //可执行程序
+      //1.创建子进程
+      //  父进程 进程等待
+      //  子进程 替换编译出来的程序
+      int pid =fork();
+      if(pid < 0){
+        LOG(ERROR,"Exec pragma failed Create child press failed")<<endl;       
+        return -1;
+      }
+      else if(pid == 0){
+        //对于子进程执行的限制
+        //1.时间限制---alarm
+        alarm(1);
+        //2.内存大小限制
+        struct rlimit rl; 
+        rl.rlim_cur = 1024 *30000;
+        rl.rlim_max = RLIM_INFINITY; //无限制
+        setrlimit(RLIMIT_AS, &rl);
+
+        //child
+        //获取：标准输出--》重定向到文件
+        int stdout_fd=open(StdoutPath(filename).c_str(),O_CREAT | O_RDWR,0664);
+        if(stdout_fd < 0){
+          LOG(ERROR,"Open stdout file failed ")<<StdoutPath(filename)<<endl;
+          return -1;
+        }
+        dup2(stdout_fd,1);
+        //标准错误--》重定向到文件
+        int stderr_fd=open(StderrPath(filename).c_str(),O_CREAT | O_RDWR,0664);
+        if(stderr_fd < 0){
+          LOG(ERROR,"Open stderr file failed ")<<StderrPath(filename)<<endl;
+          return -1;
+        }
+        dup2(stdout_fd,2);
+        execl(ExePath(filename).c_str(),ExePath(filename).c_str(),NULL);
+        exit(1);
+      }        
+
+      //father
+      int Status= -1;
+      waitpid(pid,&Status,0);
+      //将是否收到信号的信息返回给调用者，如果调用者判断是0则正常运行完毕，否则收到某个信号异常结束
+      return Status & 0x7f;//coredump标志位
+    };
+
+    static void Clean(string filename){
+      unlink(SrcPath(filename).c_str());
+      unlink(ExePath(filename).c_str());
+      unlink(ErrorPath(filename).c_str());
+      unlink(StdoutPath(filename).c_str());
+      unlink(StderrPath(filename).c_str());
+    }
+
 };
