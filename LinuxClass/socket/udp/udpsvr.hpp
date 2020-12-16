@@ -13,10 +13,10 @@ public:
     bool _creat(){
       sock=socket(AF_INET,SOCK_DGRAM,17);
       if(sock < 0){
-        perror("socket creat failed:");
+        perror("socket creat failed");
         return false;
       }
-      return false;
+      return true;
     }
     
     bool _bind(string& ip,uint16_t port){
@@ -26,32 +26,35 @@ public:
       addr.sin_addr.s_addr=inet_addr(ip.c_str());
       int ret=bind(sock,(struct sockaddr*)&addr,sizeof(addr));
       if(ret < 0){
-        perror("bind error:");
+        perror("bind error");
         return false;
       }
       return true;
     }
     
-    bool _send(string& buff,struct sockaddr_in* aimaddr){
-      int send_size=sendto(sock,&buff,buff.size(),0,(struct sockaddr_in*)aimaddr,sizeof(struct sockaddr_in));
+    bool _send(string& buff,struct sockaddr_in * aimaddr){
+      int send_size=sendto(sock,buff.c_str(),buff.length(),0,(struct sockaddr*)aimaddr,sizeof(struct sockaddr_in));
       if(send_size < 0){
-        perror("send failed:");
+        perror("send failed");
         return false;
       }
       return true;
     }
 
     bool _recv(string& buff,struct sockaddr_in* comaddr){
-      int recv_size=recvfrom(sock,&buff,buff.length(),0,(struct sockaddr_in*)comaddr,sizeof(struct sockaddr_in));
+      socklen_t leng=sizeof(struct sockaddr_in);
+      char tmp[1024]={0};
+      int recv_size=recvfrom(sock,tmp,sizeof(tmp),0,(struct sockaddr*)comaddr,&leng);
       if(recv_size < 0){
-        perror("recv failed:");
+        perror("recv failed");
         return false;
       }
+      buff.assign(tmp,recv_size);
       return true;
     }
 
     bool _close(){
-      if(close()==0){
+      if(close(sock)==0){
         return true;
       }
       return false;

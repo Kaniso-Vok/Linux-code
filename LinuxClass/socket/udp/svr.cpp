@@ -1,9 +1,9 @@
 #include "udpsvr.hpp"
-#include <iostream>
 using namespace std;
 
 int main(int argc,char* argv[]){
   if(argc!=3){
+    cout<<argc<<endl;
     cout<<"./svr [ip] [port]"<<endl;
     return 0;
   }
@@ -34,6 +34,5 @@ int main(int argc,char* argv[]){
   if(we._close() < 0){
     cout<<"close failed"<<endl;
   }
-
   return 0;
 }
