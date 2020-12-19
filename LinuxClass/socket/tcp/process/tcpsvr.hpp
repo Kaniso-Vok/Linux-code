@@ -54,7 +54,7 @@ class tcpsvr{
                 perror("accept");
                 return false;
             }
-            we.sock=this->sock;
+            we.sock=retsock;
             if(addr!=NULL){
                 memcpy(addr,&outaddr,leng);
             }

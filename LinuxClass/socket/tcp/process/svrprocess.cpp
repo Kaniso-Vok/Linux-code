@@ -20,6 +20,10 @@ int main(int argc,char* argv[]){
     tcpsvr us;
     string ip;
     uint16_t port;
+
+    ip=argv[1];
+    port=atoi(argv[2]);
+
     if(!us._creat()){
         cout<<"socket error"<<endl;
         return 0;
@@ -55,7 +59,8 @@ int main(int argc,char* argv[]){
                 cout<<"client say : "<<buff<<endl;
                 cout<<"server say : ";
                 buff.clear();
-                getline(cin,buff);
+                //getline(cin,buff);若是输入返回的话由于只有一个stdout，一次收到多条客户端信息时容易导致回复逻辑混乱
+                buff="sever already get it";
                 link._send(buff);
             }
             link._close();
